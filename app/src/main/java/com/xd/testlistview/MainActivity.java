@@ -2,7 +2,6 @@ package com.xd.testlistview;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,9 +12,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements CustomListView.LoadingListener {
+public class MainActivity extends AppCompatActivity {
 
-    private CustomListView mListView;
+    private RefreshListView mListView;
     private List<String> mDatas = new ArrayList<>();
     private MyArrayAdapter mAdapter;
 
@@ -30,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements CustomListView.Lo
     }
 
     private void initViews() {
-        mListView = (CustomListView) findViewById(R.id.listView);
+        mListView = (RefreshListView) findViewById(R.id.listView);
     }
 
     private void initDatas() {
@@ -39,28 +38,7 @@ public class MainActivity extends AppCompatActivity implements CustomListView.Lo
         }
         mAdapter = new MyArrayAdapter(this, R.layout.item_main);
         mListView.setAdapter(mAdapter);
-
-        mListView.setLoadingListener(this);
     }
-
-    @Override
-    public void load() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                addData();
-                mListView.compleLoading();
-            }
-        }, 2000);
-    }
-
-    private void addData() {
-        for (int i = 0; i < 10; i++) {
-            mDatas.add("~~添加数据源" + i + "号");
-        }
-        mAdapter.notifyDataSetChanged();
-    }
-
 
     class MyArrayAdapter extends ArrayAdapter<String> {
 
