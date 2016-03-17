@@ -3,6 +3,7 @@ package com.xd.testlistview;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ListView;
 
@@ -37,5 +38,36 @@ public class RefreshListView extends ListView {
         mHeaderView.setPadding(0, -mHeaderViewHeight, 0, 0);
     }
 
+    private int startY = -1;
 
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                startY = (int) ev.getRawY();
+                break;
+
+            case MotionEvent.ACTION_MOVE:
+                //异常情况处理,确保startY有效
+                if (startY == -1)
+                    startY = (int) ev.getRawY();
+                int endY = (int) ev.getRawY();
+
+                int dy = endY - startY;
+
+                //只有在这种情况下，下拉刷新才有效
+                if (dy > 0 && getFirstVisiblePosition() == 0) {
+                    int padding = dy - mHeaderViewHeight;
+                    mHeaderView.setPadding(0, padding, 0, 0);
+                    return true;
+                }
+                break;
+
+            case MotionEvent.ACTION_UP:
+                //重置操作
+                startY = -1;
+                break;
+        }
+        return super.onTouchEvent(ev);
+    }
 }
